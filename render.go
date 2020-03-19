@@ -8,10 +8,12 @@ import (
 
 // Output terms
 const (
-	BLUE  = "\x1b[34;1m"
-	GREEN = "\x1b[32;1m"
-	RED   = "\x1b[31;1m"
-	RESET = "\x1b[33;0m"
+	Yellow  = "\x1b[33;1m"
+	BLUE    = "\x1b[34;1m"
+	Cyan    = "\x1b[36;1m"
+	GREEN   = "\x1b[32;1m"
+	Magenta = "\x1b[35;1m"
+	RESET   = "\x1b[31;0m"
 )
 
 // Render takes the given input and renders it for a prettier output.
@@ -26,9 +28,9 @@ func Render(markdown io.Reader) (string, error) {
 			scanner.Scan()
 			line = scanner.Text()
 
-			line = strings.Replace(line, "{{", BLUE, -1)
-			line = strings.Replace(line, "}}", RED, -1)
-			rendered += "\t" + RED + strings.Trim(line, "`") + RESET + "\n"
+			line = strings.Replace(line, "{{", Yellow, -1)
+			line = strings.Replace(line, "}}", Magenta, -1)
+			rendered += "\t" + Magenta + strings.Trim(line, "`") + RESET + "\n"
 
 			renderingExample = false
 		} else if strings.HasPrefix(line, "#") {
@@ -39,12 +41,13 @@ func Render(markdown io.Reader) (string, error) {
 			rendered += line[2:] + "\n"
 		} else if strings.HasPrefix(line, "-") {
 			// Example
-			rendered += GREEN + line + RESET + "\n"
+			rendered += Cyan + line + RESET + "\n"
 			renderingExample = true
 		} else {
 			rendered += line + "\n"
 		}
 	}
+	rendered += "\n"
 	return rendered, scanner.Err()
 }
 
@@ -56,5 +59,6 @@ func Write(markdown io.Reader, dest io.Writer) error {
 		return err
 	}
 	_, err = io.WriteString(dest, out)
+
 	return err
 }

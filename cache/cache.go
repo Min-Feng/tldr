@@ -42,7 +42,7 @@ func NewRepository(remote string, ttl time.Duration) (*Repository, error) {
 
 	repo := &Repository{directory: dir, remote: remote, ttl: ttl}
 
-	info, err := os.Stat(dir)
+	_, err = os.Stat(dir)
 	if os.IsNotExist(err) {
 		err = repo.makeCacheDir()
 		if err != nil {
@@ -52,11 +52,6 @@ func NewRepository(remote string, ttl time.Duration) (*Repository, error) {
 		err = repo.loadFromRemote()
 		if err != nil {
 			return nil, fmt.Errorf("ERROR: loading data from remote: %s", err)
-		}
-	} else if repo.isReachable() && (err != nil || info.ModTime().Before(time.Now().Add(-ttl))) {
-		err = repo.Reload()
-		if err != nil {
-			return nil, fmt.Errorf("ERROR: reloading cache: %s", err)
 		}
 	}
 
